@@ -1,5 +1,6 @@
 package net.kiramishima.app.jetnotes.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,9 +9,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import net.kiramishima.app.jetnotes.R
 import net.kiramishima.app.jetnotes.domain.model.ColorModel
 import net.kiramishima.app.jetnotes.domain.model.NEW_NOTE_ID
@@ -30,10 +32,28 @@ import net.kiramishima.app.jetnotes.ui.components.TopAppBar
 import net.kiramishima.app.jetnotes.util.fromHex
 import net.kiramishima.app.jetnotes.viewmodel.MainViewModel
 
+@ExperimentalMaterialApi
 @Composable
 fun SaveNoteScreen(viewModel: MainViewModel) {
     val noteEntry : NoteModel by viewModel.noteEntry.observeAsState(NoteModel())
 
+    // color theme
+    val colors: List<ColorModel> by viewModel.colors.observeAsState(listOf())
+    // bottomDrawer
+    val bottomDrawerState: BottomDrawerState = rememberBottomDrawerState(BottomDrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
+
+    val moveNoteToTrashDialogShownState: MutableState<Boolean> = rememberSaveable { mutableStateOf(false) }
+
+    BackHandler(
+        onBack = {
+            if (bottomDrawerState.isOpen) {
+                coroutineScope.launch { bottomDrawerState.close() }
+            } else {
+                JetNotesRouter.navigateTo(Screen.Notes)
+            }
+        }
+    )
     Scaffold(
         topBar = {
             val isEditingMode: Boolean = noteEntry.id != NEW_NOTE_ID
@@ -43,18 +63,68 @@ fun SaveNoteScreen(viewModel: MainViewModel) {
                 onSaveNoteClick = {
                     viewModel.saveNote(noteEntry)
                 },
-                onOpenColorPickerClick = { },
+                onOpenColorPickerClick = {
+                    coroutineScope.launch { bottomDrawerState.open() }
+                },
                 onDeleteNoteClick = {
-                    viewModel.moveNoteToTrash(noteEntry)
+                    moveNoteToTrashDialogShownState.value = true
                 }
             )
         },
         content = {
-            SaveNoteContent(
-                note = noteEntry,
-                onNoteChange = { updateNoteEntry ->
-                    viewModel.onNoteEntryChange(updateNoteEntry)
-                })
+            BottomDrawer(
+                drawerState = bottomDrawerState,
+                drawerContent = {
+                    ColorPicker(
+                        colors = colors,
+                        onColorSelect = { color ->
+                            val newNoteEntry = noteEntry.copy(color = color)
+                            viewModel.onNoteEntryChange(newNoteEntry)
+                        }
+                    )
+                },
+                content = {
+                    SaveNoteContent(
+                        note = noteEntry,
+                        onNoteChange = { updateNoteEntry ->
+                            viewModel.onNoteEntryChange(updateNoteEntry)
+                        }
+                    )
+                }
+            )
+
+            if (moveNoteToTrashDialogShownState.value) {
+                AlertDialog(
+                    onDismissRequest = {
+                        moveNoteToTrashDialogShownState.value = false
+                    },
+                    title = {
+                        Text("Move note to the trash?")
+                    },
+                    text = {
+                        Text("Are you sure you want to " +
+                        "move this note to the trash?")
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                viewModel.moveNoteToTrash(noteEntry)
+                            }
+                        ) {
+                            Text("Confirm")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                moveNoteToTrashDialogShownState.value = false
+                            }
+                        ) {
+                            Text("Dismiss")
+                        }
+                    }
+                )
+            }
         }
     )
 }
