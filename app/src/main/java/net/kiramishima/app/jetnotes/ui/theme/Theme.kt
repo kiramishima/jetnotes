@@ -5,6 +5,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import net.kiramishima.app.jetnotes.theme.JetNotesThemeSettings
+import net.kiramishima.app.jetnotes.theme.rwGreen
+import net.kiramishima.app.jetnotes.theme.rwGreenDark
+import net.kiramishima.app.jetnotes.theme.rwRed
 
 private val DarkColorPalette = darkColors(
     primary = Purple200,
@@ -27,18 +32,33 @@ private val LightColorPalette = lightColors(
     */
 )
 
+private val LightThemeColors = lightColors(
+    primary = rwGreen,
+    primaryVariant = rwGreenDark,
+    secondary = rwRed
+)
+
+private val DarkThemeColors = darkColors(
+    primary = Color(0xFF00A055),
+    primaryVariant = Color(0xFF00F884),
+    secondary = rwRed,
+    onPrimary = Color.White
+)
+
 @Composable
-fun JetNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable() () -> Unit) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
+fun JetNotesTheme(content: @Composable() () -> Unit) {
+    val isDarkThemeEnabled =
+        isSystemInDarkTheme() ||
+                JetNotesThemeSettings.isDarkThemeEnabled
+
+    val colors = if (isDarkThemeEnabled) {
+        DarkThemeColors
     } else {
-        LightColorPalette
+        LightThemeColors
     }
 
     MaterialTheme(
         colors = colors,
-        typography = Typography,
-        shapes = Shapes,
         content = content
     )
 }

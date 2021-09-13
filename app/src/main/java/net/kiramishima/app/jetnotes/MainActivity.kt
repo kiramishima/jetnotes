@@ -12,8 +12,7 @@ import net.kiramishima.app.jetnotes.routing.Screen
 import net.kiramishima.app.jetnotes.theme.JetNotesTheme
 import net.kiramishima.app.jetnotes.ui.screens.NotesScreen
 import net.kiramishima.app.jetnotes.ui.screens.SaveNoteScreen
-// import net.kiramishima.app.jetnotes.ui.screens.SaveNoteScreen
-// import net.kiramishima.app.jetnotes.ui.screens.TrashScreen
+import net.kiramishima.app.jetnotes.ui.screens.TrashScreen
 import net.kiramishima.app.jetnotes.viewmodel.MainViewModel
 import net.kiramishima.app.jetnotes.viewmodel.MainViewModelFactory
 
@@ -34,7 +33,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MainActivityScreen(viewModel = viewModel)
+            JetNotesTheme {
+                MainActivityScreen(viewModel = viewModel) // here
+            }
         }
     }
 }
@@ -46,7 +47,7 @@ private fun MainActivityScreen(viewModel: MainViewModel) {
         when (JetNotesRouter.currentScreen) {
             is Screen.Notes -> NotesScreen(viewModel)
             is Screen.SaveNote -> SaveNoteScreen(viewModel)
-            // is Screen.Trash -> TrashScreen(viewModel)
+            is Screen.Trash -> TrashScreen(viewModel)
         }
     }
 }

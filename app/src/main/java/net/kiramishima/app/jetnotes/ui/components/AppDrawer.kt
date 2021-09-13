@@ -125,7 +125,10 @@ private fun ScreenNavigationButtonPreview() {
 // Theme Switcher
 @Composable
 private fun LightDarkThemeItem() {
-    Row(Modifier.padding(8.dp)) {
+    Row(
+        Modifier
+            .padding(8.dp)
+    ) {
         Text(
             text = "Turn on dark theme",
             style = MaterialTheme.typography.body2,
@@ -137,9 +140,7 @@ private fun LightDarkThemeItem() {
         )
         Switch(
             checked = JetNotesThemeSettings.isDarkThemeEnabled,
-            onCheckedChange = {
-                JetNotesThemeSettings.isDarkThemeEnabled = it
-            },
+            onCheckedChange = { JetNotesThemeSettings.isDarkThemeEnabled = it },
             modifier = Modifier
                 .padding(start = 8.dp, end = 8.dp)
                 .align(alignment = Alignment.CenterVertically)

@@ -5,10 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme.colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -141,7 +143,7 @@ private fun SaveNoteTopAppBar(
         title = {
             Text(
                 text = "Save Note",
-                color = MaterialTheme.colors.onPrimary
+                color = colors.onPrimary
             )
         },
         navigationIcon = {
@@ -149,7 +151,7 @@ private fun SaveNoteTopAppBar(
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Save Note Button",
-                    tint = MaterialTheme.colors.onPrimary
+                    tint = colors.onPrimary
                 )
             }
         },
@@ -158,7 +160,7 @@ private fun SaveNoteTopAppBar(
             IconButton(onClick = onSaveNoteClick) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    tint = MaterialTheme.colors.onPrimary,
+                    tint = colors.onPrimary,
                     contentDescription = "Save Note"
                 )
             }
@@ -170,7 +172,7 @@ private fun SaveNoteTopAppBar(
                         id = R.drawable.ic_baseline_color_lens_24
                     ),
                     contentDescription = "Open Color Picker Button",
-                    tint = MaterialTheme.colors.onPrimary
+                    tint = colors.onPrimary
                 )
             }
             // Delete action icon (show only in editing mode)
@@ -179,7 +181,7 @@ private fun SaveNoteTopAppBar(
                     Icon(
                         imageVector = Icons.Default.Delete,
                         contentDescription = "Delete Note Button",
-                        tint = MaterialTheme.colors.onPrimary
+                        tint = colors.onPrimary
                     )
                 }
             }
@@ -268,7 +270,7 @@ private fun ContentTextField(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
-        colors = TextFieldDefaults.textFieldColors(backgroundColor = MaterialTheme.colors.surface)
+        colors = TextFieldDefaults.textFieldColors(backgroundColor = colors.surface)
     )
 }
 

@@ -19,6 +19,7 @@ import net.kiramishima.app.jetnotes.ui.components.Note
 import net.kiramishima.app.jetnotes.ui.components.TopAppBar
 import net.kiramishima.app.jetnotes.viewmodel.MainViewModel
 
+@ExperimentalMaterialApi
 @Composable
 fun NotesScreen(viewModel: MainViewModel) {
     val notes: List<NoteModel> by viewModel
@@ -33,9 +34,24 @@ fun NotesScreen(viewModel: MainViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = "JetNotes",
-                icon = Icons.Filled.List,
-                onIconClick = {}
+                title = {
+                    Text(
+                        text = "JetNotes",
+                        color = MaterialTheme.colors.onPrimary
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = {
+                            coroutineScope.launch { scaffoldState.drawerState.open() }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.List,
+                            contentDescription = "Drawer Button"
+                        )
+                    }
+                }
             )
         },
         scaffoldState = scaffoldState,
@@ -74,6 +90,7 @@ fun NotesScreen(viewModel: MainViewModel) {
 }
 
 
+@ExperimentalMaterialApi
 @Composable
 private fun NotesList(
     notes: List<NoteModel>,
@@ -92,6 +109,7 @@ private fun NotesList(
     }
 }
 
+@ExperimentalMaterialApi
 @Preview
 @Composable
 private fun NotesListPreview() {
